@@ -7,9 +7,9 @@ services:
       MARIADB_USER: serial_watchers_user
       MARIADB_PASSWORD: serial_watchers_pwd
     volumes:
-      - database_data:/var/lib/mysql
+      - database_swcarole:/var/lib/mysql
     ports:
       - "3306:3306"
 
 volumes:
-  database_data:
+  database_swcarole:

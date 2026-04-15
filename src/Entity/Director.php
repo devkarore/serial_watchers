@@ -8,32 +8,58 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
+
+
+use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use Symfony\Component\Serializer\Attribute\Groups;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\ApiResource;
+#[ApiResource(
+    operations : [ 
+        new GetCollection(), 
+        new Get() 
+    ],
+    normalizationContext: ['groups' => ['director:read']]
+)]
+#[ApiFilter(SearchFilter::class, properties: [
+    'nationality' => 'partial'
+])]
+
+
+
 #[ORM\Entity(repositoryClass: DirectorRepository::class)]
 class Director
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['director:read'])]
     private ?int $id = null;
 
     #[Assert\NotBlank(message: "Le prénom est obligatoire")]
     #[Assert\Length(max: 100, maxMessage:"Le prénom ne peut pas faire plus de 100 caractères")]
     #[ORM\Column(length: 100)]
+    #[Groups(['director:read','movie:read'])]
     private ?string $firstName = null;
 
     #[Assert\NotBlank(message: "Le nom est obligatoire")]
     #[Assert\Length(max: 100, maxMessage:"Le nom ne peut pas faire plus de 100 caractères")]
     #[ORM\Column(length: 100)]
+    #[Groups(['director:read','movie:read'])]
     private ?string $lastName = null;
 
     #[Assert\NotBlank(message: "La nationalité est obligatoire")]
     #[ORM\Column(length: 100)]
+    #[Groups(['director:read'])]
     private ?string $nationality = null;
 
     /**
      * @var Collection<int, Movie>
      */
     #[ORM\OneToMany(targetEntity: Movie::class, mappedBy: 'director')]
+    #[Groups(['director:read'])]
     private Collection $movies;
 
     public function __construct()
